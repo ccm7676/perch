@@ -1,0 +1,93 @@
+/*
+Copyright (C) 2023 Carl Marino
+This file is part of Perch.
+Perch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
+Perch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+You should have received a copy of the GNU General Public License along with Perch. If not, see <https://www.gnu.org/licenses/>.
+*/
+
+use std::fs;
+use std::path::Path;
+
+
+//recursive function that crawles through a directory and its subdirectories
+pub fn super_walk(dir: &Path) -> Vec<String>{
+    //gets the walkdir result from the specified directory
+    let walkdir_result = walkdir(dir);
+
+    //vector containing the directories contained in the specified directory
+    let dirs_found = &walkdir_result.clone()[1];
+    //vector containing all the files found
+    let mut files_found: Vec<String> = Vec::new();
+
+    //appends the files discovered during the walk of the directory to the files_found vector
+    files_found.append(&mut walkdir_result.clone()[0]);
+    
+    //checks if dirs_found isnt empty
+    if !dirs_found.is_empty() {
+        //loops through all the directories in dirs_found
+        for dir in dirs_found {
+            //appends files found in the directory and subdirectories to files_found
+            files_found.append(&mut super_walk(Path::new(dir)));
+        }
+    } 
+    //returns files_found
+    return files_found; 
+}
+
+
+
+
+//gets the contents of a single directory and returns the files and dirs seperatly
+pub fn walkdir(dir: &Path) -> [Vec<String>; 2] {
+
+    //String which specifies the file type filter
+    let mut filter:String = String::from("");
+    
+
+    //vec that stores the discovered directories
+    let mut dirs_found: Vec<String> = Vec::new();
+    //vec that stores the discovered files
+    let mut files_found: Vec<String> = Vec::new();
+    
+    //check if the specified path is a directory
+    if dir.is_dir() {
+
+        //loop through the directory and find all its entries
+        for entry in fs::read_dir(dir).unwrap() {
+            //get path from entry
+            let path = entry.unwrap().path();
+
+            //check if the path is a directory 
+            if path.is_dir() {
+                if format!("{}",path.display()).chars().nth(format!("{}",dir.display()).chars().count() +1).unwrap() != '.' {
+                    //add path to dirs_found vec
+                    dirs_found.push(format!("{}",path.display()));
+                }
+            }
+
+            //runs if the path doesnt lead to a directory
+            else {
+                if format!("{}",path.display()).chars().nth(format!("{}",dir.display()).chars().count() +1).unwrap() != '.' {
+                    //gets the file extension
+                    let file_ext = format!("{}",path.display()).split(".").last().unwrap().to_string();
+                    
+                    //checks if filter exists and is equal to the current file extension
+                    if filter != "" && filter == file_ext{
+                        //pushes the path of the file to the files_found vec
+                        files_found.push(format!("{}",path.display()));
+                    }
+                    
+                    //runs if there is no filter 
+                    else if filter == "" {
+                        //pushes the path of the file to the files_found vec
+                        files_found.push(format!("{}",path.display()));
+                    }
+                }
+            }
+        }
+    }
+    //returns the two vecs as an array
+    [files_found, dirs_found]
+
+}
