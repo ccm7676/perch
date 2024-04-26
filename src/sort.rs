@@ -5,11 +5,11 @@ pub fn merge_sort(vec_to_split: Vec<String>) -> Vec<String> {
     let mut split1:Vec<String> = vec_to_split[..middle].to_vec();   
     let mut split2:Vec<String> = vec_to_split[middle..].to_vec();    
 
-    if(split1.len() > 1) {
+    if split1.len() > 1  {
         split1 = merge_sort(split1);
     }
 
-    if(split2.len() > 1) {
+    if split2.len() > 1 {
         split2 = merge_sort(split2);
     }
 

@@ -14,7 +14,7 @@ use std::env;
 use crate::sort; 
 
 pub fn index_home() {
-    let home_dir = std::env::var("HOME").unwrap();
+    let home_dir = env::var("HOME").unwrap();
     let home_dir_path = Path::new(&home_dir);
     let sorted = sort::merge_sort(super_walk(home_dir_path));
     println!("{:?}",sorted);
@@ -52,7 +52,7 @@ fn super_walk(dir: &Path) -> Vec<String>{
 pub fn walkdir(dir: &Path) -> [Vec<String>; 2] {
 
     //String which specifies the file type filter
-    let mut filter:String = String::from("");
+    let filter:String = String::from("");
     
 
     //vec that stores the discovered directories

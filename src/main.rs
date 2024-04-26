@@ -7,12 +7,10 @@ Perch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANT
 You should have received a copy of the GNU General Public License along with Perch. If not, see <https://www.gnu.org/licenses/>.
 */
 
-use std::path::Path;
 
 mod index;
 mod sort;
 
 fn main() {
-    let dir = Path::new("/home/carl/Documents/");
     index::index_home();
 }
