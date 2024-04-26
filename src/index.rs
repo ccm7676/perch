@@ -85,13 +85,13 @@ pub fn walkdir(dir: &Path) -> [Vec<String>; 2] {
                     //checks if filter exists and is equal to the current file extension
                     if filter != "" && filter == file_ext{
                         //pushes the path of the file to the files_found vec
-                        files_found.push(format!("{}",path.display()));
+                        files_found.push(format!("{} // {}", path.display().to_string().split("/").last().unwrap(),path.display().to_string()));
                     }
                     
                     //runs if there is no filter 
                     else if filter == "" {
                         //pushes the path of the file to the files_found vec
-                        files_found.push(format!("{}",path.display()));
+                        files_found.push(format!("{} // {}",path.display().to_string().split("/").last().unwrap(),path.display().to_string()));
                     }
                 }
             }
