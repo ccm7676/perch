@@ -10,14 +10,46 @@ You should have received a copy of the GNU General Public License along with Per
 use std::fs;
 use std::path::Path;
 use std::env;
+use rusqlite::{Connection, Result, params};
 
 use crate::sort; 
+
+#[derive(Debug)]
+struct FileEntry {
+    file_name: String,
+    file_path: String,
+}
 
 pub fn index_home() {
     let home_dir = env::var("HOME").unwrap();
     let home_dir_path = Path::new(&home_dir);
     let sorted = sort::merge_sort(super_walk(home_dir_path));
-    println!("{:?}",sorted);
+    
+    add_new_index("home", sorted);
+}
+
+fn add_new_index(table_name: &str, index: Vec<String>) -> Result<()> {
+    let conn = Connection::open("perch.db")?;
+
+    conn.execute(&format!("DROP TABLE IF EXISTS {}", table_name), [])?;
+
+    conn.execute(&format!(
+        "CREATE TABLE IF NOT EXISTS {} (
+            file_name TEXT NOT NULL,
+            file_path TEXT NOT NULL
+        )", table_name), 
+        [],
+    )?;
+
+
+    let mut stmt = conn.prepare(&format!("INSERT into {} (file_name, file_path) VALUES (?1,?2)", table_name))?;
+
+    for entry in index {
+        let entry_content:Vec<&str> = entry.split("//").collect();
+        stmt.execute(params![entry_content[0],entry_content[1]])?;
+    }
+
+    Ok(())
 }
 
 //recursive function that crawles through a directory and its subdirectories
