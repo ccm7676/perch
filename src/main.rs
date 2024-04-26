@@ -11,7 +11,8 @@ use std::path::Path;
 
 mod index;
 mod sort;
+
 fn main() {
     let dir = Path::new("/home/carl/Documents/");
-    println!("{:?}", sort::merge_sort(index::super_walk(dir)));
+    index::index_home();
 }

@@ -1,4 +1,5 @@
 /*
+ *
 Copyright (C) 2023 Carl Marino
 This file is part of Perch.
 Perch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
@@ -8,10 +9,19 @@ You should have received a copy of the GNU General Public License along with Per
 
 use std::fs;
 use std::path::Path;
+use std::env;
 
+use crate::sort; 
+
+pub fn index_home() {
+    let home_dir = std::env::var("HOME").unwrap();
+    let home_dir_path = Path::new(&home_dir);
+    let sorted = sort::merge_sort(super_walk(home_dir_path));
+    println!("{:?}",sorted);
+}
 
 //recursive function that crawles through a directory and its subdirectories
-pub fn super_walk(dir: &Path) -> Vec<String>{
+fn super_walk(dir: &Path) -> Vec<String>{
     //gets the walkdir result from the specified directory
     let walkdir_result = walkdir(dir);
 
