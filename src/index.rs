@@ -14,18 +14,12 @@ use rusqlite::{Connection, Result, params, Transaction};
 
 use crate::sort; 
 
-#[derive(Debug)]
-struct FileEntry {
-    file_name: String,
-    file_path: String,
-}
-
 pub fn index_home() {
     let home_dir = env::var("HOME").unwrap();
     let home_dir_path = Path::new(&home_dir);
     let sorted = sort::merge_sort(super_walk(home_dir_path));
     
-    add_new_index("home", sorted);
+    let _ = add_new_index("home", sorted);
 }
 
 fn add_new_index(table_name: &str, index: Vec<String>) -> Result<()> {
