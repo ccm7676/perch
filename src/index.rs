@@ -24,6 +24,12 @@ pub fn index_home() {
     let _ = add_new_index("home", sorted);
 }
 
+//indexes all app dirs
+pub fn index_apps() {
+    let local_app_path = Path::new(&format!("{}/.local/share/applications", env::var("HOME").unwrap()));
+
+}
+
 //create sqlite table and each element of the vec to the table
 fn add_new_index(table_name: &str, index: Vec<String>) -> Result<()> {
     let mut conn = Connection::open("perch.db")?;
