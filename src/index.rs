@@ -10,7 +10,7 @@ You should have received a copy of the GNU General Public License along with Per
 use std::fs;
 use std::path::Path;
 use std::env;
-use rusqlite::{Connection, Result, params};
+use rusqlite::{Connection, Result, params, Transaction};
 
 use crate::sort; 
 
@@ -29,7 +29,7 @@ pub fn index_home() {
 }
 
 fn add_new_index(table_name: &str, index: Vec<String>) -> Result<()> {
-    let conn = Connection::open("perch.db")?;
+    let mut conn = Connection::open("perch.db")?;
 
     conn.execute(&format!("DROP TABLE IF EXISTS {}", table_name), [])?;
 
@@ -41,14 +41,23 @@ fn add_new_index(table_name: &str, index: Vec<String>) -> Result<()> {
         [],
     )?;
 
+    let tx = conn.transaction()?;
+    
+    insert_entries(&tx, index, table_name)?;
 
-    let mut stmt = conn.prepare(&format!("INSERT into {} (file_name, file_path) VALUES (?1,?2)", table_name))?;
+    tx.commit()?;
 
-    for entry in index {
+    Ok(())
+}
+
+fn insert_entries(tx: &Transaction, entries: Vec<String>, table_name:&str) -> Result<()> {
+    
+    let mut stmt = tx.prepare(&format!("INSERT into {} (file_name, file_path) VALUES (?1,?2)", table_name))?;
+   
+    for entry in entries {
         let entry_content:Vec<&str> = entry.split("//").collect();
         stmt.execute(params![entry_content[0],entry_content[1]])?;
     }
-
     Ok(())
 }
 
