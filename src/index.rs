@@ -14,6 +14,7 @@ use rusqlite::{Connection, Result, params, Transaction};
 
 use crate::sort; 
 
+//indexes home directory
 pub fn index_home() {
     let home_dir = env::var("HOME").unwrap();
     let home_dir_path = Path::new(&home_dir);
@@ -22,6 +23,7 @@ pub fn index_home() {
     let _ = add_new_index("home", sorted);
 }
 
+//create sqlite table and each element of the vec to the table
 fn add_new_index(table_name: &str, index: Vec<String>) -> Result<()> {
     let mut conn = Connection::open("perch.db")?;
 
@@ -29,6 +31,7 @@ fn add_new_index(table_name: &str, index: Vec<String>) -> Result<()> {
 
     conn.execute(&format!(
         "CREATE TABLE IF NOT EXISTS {} (
+            id        INTEGER PRIMARY KEY,
             file_name TEXT NOT NULL,
             file_path TEXT NOT NULL
         )", table_name), 
@@ -44,13 +47,14 @@ fn add_new_index(table_name: &str, index: Vec<String>) -> Result<()> {
     Ok(())
 }
 
+//inserts inserts all entries in a vec to a table using a single transaction 
 fn insert_entries(tx: &Transaction, entries: Vec<String>, table_name:&str) -> Result<()> {
     
-    let mut stmt = tx.prepare(&format!("INSERT into {} (file_name, file_path) VALUES (?1,?2)", table_name))?;
+    let mut stmt = tx.prepare(&format!("INSERT into {} (id, file_name, file_path) VALUES (?1,?2, ?3)", table_name))?;
    
-    for entry in entries {
-        let entry_content:Vec<&str> = entry.split("//").collect();
-        stmt.execute(params![entry_content[0],entry_content[1]])?;
+    for i in 0..entries.len() {
+        let entry_content:Vec<&str> = entries[i].split("//").collect();
+        stmt.execute(params![i,entry_content[0],entry_content[1]])?;
     }
     Ok(())
 }

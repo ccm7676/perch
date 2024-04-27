@@ -7,7 +7,7 @@ Perch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANT
 You should have received a copy of the GNU General Public License along with Perch. If not, see <https://www.gnu.org/licenses/>.
 */
 
-
+//publicly accessable func that splits the vec and if it can be split again recursivly calls itself 
 pub fn merge_sort(vec_to_split: Vec<String>) -> Vec<String> {
     let middle:usize = (vec_to_split.len() as f32 / 2.0).floor() as usize;
 
@@ -27,6 +27,7 @@ pub fn merge_sort(vec_to_split: Vec<String>) -> Vec<String> {
     return out;
 }
 
+//func that merges two array according to alphabetical order
 fn merge(list1: Vec<String>, list2: Vec<String>) -> Vec<String> {
     let mut output: Vec<String> = Vec::new();
     let mut i = 0;
