@@ -7,10 +7,14 @@ Perch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANT
 You should have received a copy of the GNU General Public License along with Perch. If not, see <https://www.gnu.org/licenses/>.
 */
 
-
+mod search;
 mod index;
 mod sort;
 
+use std::env;
+
 fn main() {
+    let query = std::env::args().nth(1).expect("no args");
     index::index_home();
+    let _ = search::search("home", &query);
 }
