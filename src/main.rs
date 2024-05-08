@@ -1,20 +1,26 @@
-/*
- *
-Copyright (C) 2023,2024 Carl Marino
-This file is part of Perch.
-Perch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
-Perch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License along with Perch. If not, see <https://www.gnu.org/licenses/>.
-*/
+mod window;
+use gtk::prelude::*;
+use gtk::{gio, glib, Application};
+use window::Window;
+use gtk4_layer_shell::{self, Layer, LayerShell,Edge};
 
-mod search;
-mod index;
-mod sort;
+const APP_ID: &str = "org.cmarino.perch";
 
-use std::env;
+fn main() -> glib::ExitCode {
+    gio::resources_register_include!("ui.gresource")
+        .expect("Failed to register resources.");
 
-fn main() {
-    let query = std::env::args().nth(1).expect("no args");
-    index::index_home();
-    let _ = search::search("home", &query);
+    let app = Application::builder().application_id(APP_ID).build();
+    app.connect_activate(build_ui);
+    app.run()
+}
+
+fn build_ui(app: &Application) {
+    let window = Window::new(app);
+ 
+    window.init_layer_shell();
+    window.set_layer(Layer::Top);
+    
+    window.set_default_size(400, 300);
+    window.present();
 }
