@@ -4,21 +4,8 @@
     <property name="title">Perch</property>
     <child>
       <object class="GtkGrid" id="my_grid">
-        
         <child>
-          <object class="GtkLabel" id="label1">
-            <property name="label">🔍</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">0</property>
-              <property name="row-span">1</property>
-              <property name="column-span">1</property>
-            </layout>
-          </object>
-        </child>
-
-        <child>
-          <object class="GtkEntry" id="description_entry">
+          <object class="GtkSearchEntry" id="description_entry">
             <layout>
               <property name="column">1</property>
               <property name="row">0</property>
