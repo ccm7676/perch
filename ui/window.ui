@@ -3,15 +3,50 @@
   <template class="PerchWindow" parent="GtkApplicationWindow">
     <property name="title">Perch</property>
     <child>
-      <object class="GtkGrid" id="my_grid">
+      <object class="GtkBox" id="main_container">
+        <property name="orientation">vertical</property>
+            
         <child>
-          <object class="GtkSearchEntry" id="description_entry">
+          <object class="GtkSearchEntry" id="search_bar">
             <layout>
               <property name="column">1</property>
               <property name="row">0</property>
               <property name="row-span">1</property>
               <property name="column-span">1</property>
             </layout>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkScrolledWindow" id="results_container">
+            <property name="vexpand">true</property>
+
+
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>   
+                <property name="vexpand">true</property>
+
+                <child>
+                  <object class="GtkButton">
+                    <property name="label">Item</property>
+                  </object> 
+                </child>
+     
+               <child>
+                  <object class="GtkButton">
+                    <property name="label">Item</property>
+                  </object> 
+                </child>
+                
+               <child>
+                  <object class="GtkButton">
+                    <property name="label">Item</property>
+                  </object> 
+               </child>
+     
+              </object>
+            </child> 
           </object>
         </child>
 
