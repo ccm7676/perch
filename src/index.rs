@@ -10,10 +10,18 @@ You should have received a copy of the GNU General Public License along with Per
 
 use std::fs;
 use std::path::Path;
+use std::io::prelude::*;
 use std::env;
 use rusqlite::{Connection, Result, params, Transaction};
 
 use crate::sort; 
+
+struct AppEntry {
+    app_name: String,
+    exec: String,
+    icon_path: String,
+    description: String,
+}
 
 //indexes home directory
 pub fn index_home() {
@@ -26,8 +34,35 @@ pub fn index_home() {
 
 //indexes all app dirs
 pub fn index_apps() {
-    let local_app_path = Path::new(&format!("{}/.local/share/applications", env::var("HOME").unwrap()));
+    let xdg_dirs = env::var("XDG_DATA_DIRS").unwrap();
+    let local_app_dir = format!("{}/.local/share/applications", env::var("HOME").unwrap());
+    let mut app_dirs: Vec<&str> = Vec::from(xdg_dirs.split(":").collect::<Vec<_>>());
+    let mut app_entries: Vec<String> = Vec::new();
+    app_dirs.push(local_app_dir.as_str());
+    
+    for dir in app_dirs {
+        let files = super_walk(Path::new(&dir));
+        
+        for file in files {
+            let file_content:Vec<&str> = file.split("//").collect();
 
+            if file_content[0].contains(".desktop") {
+                println!("{}", read_desktop(file_content[1]).unwrap());
+
+            } 
+
+        }
+    }
+}
+
+fn read_desktop(file_path: &str) -> std::io::Result<String> {
+    println!("{}", file_path);
+    let mut file = fs::File::open(file_path)?;
+    let mut contents = String::new();
+
+    file.read_to_string(&mut contents)?;
+    
+    Ok(contents)
 }
 
 //create sqlite table and each element of the vec to the table
@@ -39,8 +74,8 @@ fn add_new_index(table_name: &str, index: Vec<String>) -> Result<()> {
     conn.execute(&format!(
         "CREATE TABLE IF NOT EXISTS {} (
             id        INTEGER PRIMARY KEY,
-            file_name TEXT NOT NULL,
-            file_path TEXT NOT NULL
+            item_name TEXT NOT NULL,
+            item_info TEXT NOT NULL
         )", table_name), 
         [],
     )?;
@@ -57,7 +92,7 @@ fn add_new_index(table_name: &str, index: Vec<String>) -> Result<()> {
 //inserts inserts all entries in a vec to a table using a single transaction 
 fn insert_entries(tx: &Transaction, entries: Vec<String>, table_name:&str) -> Result<()> {
     
-    let mut stmt = tx.prepare(&format!("INSERT into {} (id, file_name, file_path) VALUES (?1,?2, ?3)", table_name))?;
+    let mut stmt = tx.prepare(&format!("INSERT into {} (id, item_name, item_info) VALUES (?1,?2, ?3)", table_name))?;
    
     for i in 0..entries.len() {
         let entry_content:Vec<&str> = entries[i].split("//").collect();

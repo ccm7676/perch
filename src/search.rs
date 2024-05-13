@@ -21,7 +21,7 @@ pub fn search(table_name:&str, query:&str) -> Result<Vec<Vec<String>>>{
     
     let num_of_rows:i32 = conn.query_row(&format!("SELECT COUNT(*) FROM {}", table_name), [], |row| {row.get(0)})?; 
     
-    let mut stmt = conn.prepare(&format!("SELECT * FROM {} WHERE file_name LIKE '{}%'", table_name, query))?;
+    let mut stmt = conn.prepare(&format!("SELECT * FROM {} WHERE item_name LIKE '{}%'", table_name, query))?;
     let mut final_res:Vec<Vec<String>> = Vec::new();
     
     let results = stmt.query_map([], |row| {
