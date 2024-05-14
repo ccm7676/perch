@@ -9,6 +9,7 @@ You should have received a copy of the GNU General Public License along with Per
 */
 
 use std::fs;
+use std::process::Command;
 use std::path::Path;
 use std::io::prelude::*;
 use std::env;
@@ -17,10 +18,10 @@ use rusqlite::{Connection, Result, params, Transaction};
 use crate::sort; 
 
 struct AppEntry {
-    app_name: String,
+    name: String,
     exec: String,
-    icon_path: String,
-    description: String,
+    icon: String,
+    desc: String,
 }
 
 //indexes home directory
@@ -37,33 +38,66 @@ pub fn index_apps() {
     let xdg_dirs = env::var("XDG_DATA_DIRS").unwrap();
     let local_app_dir = format!("{}/.local/share/applications", env::var("HOME").unwrap());
     let mut app_dirs: Vec<&str> = Vec::from(xdg_dirs.split(":").collect::<Vec<_>>());
-    let mut app_entries: Vec<String> = Vec::new();
+    let mut app_entries: Vec<AppEntry> = Vec::new();
     app_dirs.push(local_app_dir.as_str());
     
     for dir in app_dirs {
         let files = super_walk(Path::new(&dir));
-        
+
         for file in files {
             let file_content:Vec<&str> = file.split("//").collect();
+            let file_ext = file_content[0].split(".").last().unwrap();
 
-            if file_content[0].contains(".desktop") {
-                println!("{}", read_desktop(file_content[1]).unwrap());
-
+            if file_ext == "desktop " {
+                
+                app_entries.push(read_desktop(&file_content[1][1..]).unwrap());
+                 
             } 
-
         }
     }
 }
 
-fn read_desktop(file_path: &str) -> std::io::Result<String> {
-    println!("{}", file_path);
-    let mut file = fs::File::open(file_path)?;
-    let mut contents = String::new();
 
-    file.read_to_string(&mut contents)?;
+fn read_desktop(file_path: &str) -> Option<AppEntry> {
+
+    let desktop_file = Command::new("cat").arg(file_path).output().expect("no such file or directory");
+    let output = String::from_utf8(desktop_file.stdout).unwrap();
     
-    Ok(contents)
+    let output_lines: Vec<&str> = output.split("\n").collect();
+    
+    let mut is_app:bool = false;
+
+    let mut app_desc = String::new();
+    let mut app_name = String::new();
+    let mut app_exec = String::new();
+    let mut app_icon = String::new();
+
+    for line in output_lines {
+        let line_split:Vec<&str> = line.split("=").collect();
+        
+        if line == "Type=Application"{
+            is_app = true;
+        }
+        
+        else {
+            match line_split[0] {
+                "Name" => app_name = line_split[1].to_string(),
+                "Exec" => app_exec = line_split[1].to_string(),
+                "Icon" => app_icon = line_split[1].to_string(),
+                "Comment" => app_desc = line_split[1].to_string(),
+                &_ => (),
+            }
+        }
+
+    }
+
+    if is_app == true {
+        return Some(AppEntry{name: app_name,exec: app_exec,icon: app_icon,desc: app_desc,});
+    }
+
+    return None
 }
+
 
 //create sqlite table and each element of the vec to the table
 fn add_new_index(table_name: &str, index: Vec<String>) -> Result<()> {

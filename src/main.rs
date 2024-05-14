@@ -20,5 +20,5 @@ fn main() {
 //    let search_results = search::search("home", "hello");
 //    println!("{:?}", search_results.unwrap());
 
-    ui::start_ui();
+//    ui::start_ui();
 }
