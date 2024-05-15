@@ -55,6 +55,8 @@ pub fn index_apps() {
             } 
         }
     }
+
+    let _ = add_app_index(app_entries);
 }
 
 
@@ -98,10 +100,59 @@ fn read_desktop(file_path: &str) -> Option<AppEntry> {
     return None
 }
 
+fn add_app_index(index: Vec<AppEntry>) -> Result<()> {
+    let mut conn = Connection::open("perch.db")?;
+
+    conn.execute("DROP TABLE IF EXISTS apps", [])?;
+
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS apps (
+            id        INTEGER PRIMARY KEY,
+            app_name TEXT NOT NULL,
+            app_exec TEXT NOT NULL,
+            app_icon TEXT NOT NULL,
+            app_desc TEXT NOT NULL
+        )", 
+        [],
+    )?;
+
+
+
+    let tx = conn.transaction()?;
+
+    insert_app_entries(&tx, index)?;
+
+    tx.commit()?;
+
+    Ok(())
+}
+
+
+fn insert_app_entries(tx: &Transaction, index: Vec<AppEntry>) -> Result<()> {
+    let mut stmt = tx.prepare("INSERT into apps (id, app_name, app_exec, app_icon, app_desc) VALUES (?1,?2, ?3, ?4, ?5)")?;
+   
+    for i in 0..index.len() {
+        stmt.execute(params![i, index[i].name, index[i].exec, index[i].icon, index[i].desc])?;
+    }
+    Ok(())
+}
 
 //create sqlite table and each element of the vec to the table
 fn add_new_index(table_name: &str, index: Vec<String>) -> Result<()> {
     let mut conn = Connection::open("perch.db")?;
+
+    add_table(table_name, &conn)?;
+
+    let tx = conn.transaction()?;
+    
+    insert_entries(&tx, index, table_name)?;
+
+    tx.commit()?;
+
+    Ok(())
+}
+
+fn add_table(table_name: &str, conn: &Connection) -> Result<()> {
 
     conn.execute(&format!("DROP TABLE IF EXISTS {}", table_name), [])?;
 
@@ -114,15 +165,8 @@ fn add_new_index(table_name: &str, index: Vec<String>) -> Result<()> {
         [],
     )?;
 
-    let tx = conn.transaction()?;
-    
-    insert_entries(&tx, index, table_name)?;
-
-    tx.commit()?;
-
     Ok(())
 }
-
 //inserts inserts all entries in a vec to a table using a single transaction 
 fn insert_entries(tx: &Transaction, entries: Vec<String>, table_name:&str) -> Result<()> {
     
