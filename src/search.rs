@@ -10,13 +10,40 @@ You should have received a copy of the GNU General Public License along with Per
 
 
 use rusqlite::{Connection, Result};
+use crate::index::AppEntry;
 
 struct ItemEntry {
     item_name: String,
     item_info: String,
 }
 
-pub fn search(table_name:&str, query:&str) -> Result<Vec<Vec<String>>>{
+
+pub fn search_apps(query: &str) -> Result<Vec<AppEntry>>{
+    let mut conn = Connection::open("perch.db")?;
+    
+    
+    let mut stmt = conn.prepare(&format!("SELECT * FROM apps WHERE app_name LIKE '{}%'", query))?;
+    let mut final_res:Vec<AppEntry> = Vec::new();
+    
+    let results = stmt.query_map([], |row| {
+        Ok(AppEntry {
+            name: row.get(1)?,
+            exec: row.get(2)?,
+            icon: row.get(3)?,
+            desc: row.get(4)?,
+        })
+    })?;
+
+    for result in results.flatten() {
+        final_res.push(result);
+    }
+
+    
+    Ok(final_res)
+
+}
+
+pub fn search_files(table_name:&str, query:&str) -> Result<Vec<Vec<String>>>{
     let mut conn = Connection::open("perch.db")?;
     
     let num_of_rows:i32 = conn.query_row(&format!("SELECT COUNT(*) FROM {}", table_name), [], |row| {row.get(0)})?; 

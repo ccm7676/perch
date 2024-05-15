@@ -17,11 +17,11 @@ use rusqlite::{Connection, Result, params, Transaction};
 
 use crate::sort; 
 
-struct AppEntry {
-    name: String,
-    exec: String,
-    icon: String,
-    desc: String,
+pub struct AppEntry {
+    pub name: String,
+    pub exec: String,
+    pub icon: String,
+    pub desc: String,
 }
 
 //indexes home directory
