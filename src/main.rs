@@ -16,10 +16,9 @@ mod index;
 mod sort;
 
 fn main() {
-    index::index_apps();
-    println!("{}",search::search_apps("Fi").unwrap()[0].name);
 //    let search_results = search::search("home", "hello");
 //    println!("{:?}", search_results.unwrap());
 
-//    ui::start_ui();
+    ui::start_ui();
+
 }

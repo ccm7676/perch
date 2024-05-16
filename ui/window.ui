@@ -3,11 +3,11 @@
   <template class="PerchWindow" parent="GtkApplicationWindow">
     <property name="title">Perch</property>
     <child>
-      <object class="GtkBox" id="main_container">
+      <object class="GtkBox" id="mainContainer">
         <property name="orientation">vertical</property>
             
         <child>
-          <object class="GtkSearchEntry" id="search_bar">
+          <object class="GtkSearchEntry" id="searchBar">
             <layout>
               <property name="column">1</property>
               <property name="row">0</property>
@@ -18,7 +18,7 @@
         </child>
 
         <child>
-          <object class="GtkScrolledWindow" id="results_container">
+          <object class="GtkScrolledWindow" id="resultsContainer">
             <property name="vexpand">true</property>
 
 
@@ -28,24 +28,36 @@
                 <property name="vexpand">true</property>
 
                 <child>
-                  <object class="GtkButton">
-                    <property name="label">Item</property>
+                  <object class="GtkBox" id="item">
+                    <property name="visible">True</property> 
+                    <property name="orientation">horizontal</property>
+                    <property name="hexpand">true</property>
+                    
+                    <child>
+                      <object class="GtkBox" id="itemTextContainer">
+                      
+                        <property name="orientation">vertical</property>
+
+                        <child>
+                          <object class="GtkLabel" id="primaryTxt">
+                            <property name="label">Name</property>
+                          </object>
+                        </child>
+
+                        <child>
+                          <object class="GtkLabel" id="secondaryTxt">
+                            <property name="label">Description of item</property>
+                          </object>
+                        </child>
+
+
+                      </object>
+                    </child>
+
                   </object> 
-                </child>
-     
-               <child>
-                  <object class="GtkButton">
-                    <property name="label">Item</property>
-                  </object> 
-                </child>
-                
-               <child>
-                  <object class="GtkButton">
-                    <property name="label">Item</property>
-                  </object> 
-               </child>
-     
-              </object>
+                </child> 
+             
+             </object>
             </child> 
           </object>
         </child>

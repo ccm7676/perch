@@ -1,0 +1,28 @@
+window {
+  background-color:#000000;
+  border-radius: 20px;
+}
+
+entry.search {
+  min-height: 50px;
+  background-color:#000000;
+  outline: none;
+  border-top-width: 0px;
+  border-left-width: 0px;
+  border-right-width: 0px;
+  border-bottom-width: 1px;
+  font-size: 15px;
+  color: #FFFFFF;
+  border-color: #FFFFFF44;
+  border-radius: 0px;
+}
+
+scrolledwindow {
+  margin: 10px;
+}
+
+#item {
+  min-height: 45px;
+  border-radius: 10px;
+  background-color: #FFFFFF44;
+}

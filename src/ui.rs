@@ -52,7 +52,7 @@ fn build_ui(app: &Application) {
     window.init_layer_shell();
     window.set_layer(Layer::Top);
     window.set_keyboard_mode(KeyboardMode::OnDemand); 
-    window.set_default_size(400, 300);
+    window.set_default_size(580, 480);
 
     let action_close = ActionEntry::builder("close")
         .activate(|window: &Window, _, _| {
