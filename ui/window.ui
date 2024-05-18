@@ -3,11 +3,11 @@
   <template class="PerchWindow" parent="GtkApplicationWindow">
     <property name="title">Perch</property>
     <child>
-      <object class="GtkBox" id="mainContainer">
+      <object class="GtkBox">
         <property name="orientation">vertical</property>
             
         <child>
-          <object class="GtkSearchEntry" id="searchBar">
+          <object class="GtkSearchEntry">
             <layout>
               <property name="column">1</property>
               <property name="row">0</property>
@@ -18,7 +18,7 @@
         </child>
 
         <child>
-          <object class="GtkScrolledWindow" id="resultsContainer">
+          <object class="GtkScrolledWindow">
             <property name="vexpand">true</property>
 
 
@@ -28,24 +28,30 @@
                 <property name="vexpand">true</property>
 
                 <child>
-                  <object class="GtkBox" id="item">
+                  <object class="GtkBox">
+                    <property name="name">item</property>
                     <property name="visible">True</property> 
                     <property name="orientation">horizontal</property>
-                    <property name="hexpand">true</property>
-                    
+                    <property name="hexpand">true</property> 
+                      
                     <child>
-                      <object class="GtkBox" id="itemTextContainer">
+                      <object class="GtkBox">
                       
                         <property name="orientation">vertical</property>
-
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
                         <child>
-                          <object class="GtkLabel" id="primaryTxt">
-                            <property name="label">Name</property>
+                         <object class="GtkLabel">
+                           <property name="halign">start</property>
+                           <property name="name">primaryTxt</property>
+                           <property name="label">Name</property>
                           </object>
                         </child>
 
                         <child>
-                          <object class="GtkLabel" id="secondaryTxt">
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="name">secondaryTxt</property>
                             <property name="label">Description of item</property>
                           </object>
                         </child>

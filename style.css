@@ -1,11 +1,11 @@
 window {
-  background-color:#000000;
+  background-color:#00000088;
   border-radius: 20px;
 }
 
 entry.search {
   min-height: 50px;
-  background-color:#000000;
+  background-color:#00000000;
   outline: none;
   border-top-width: 0px;
   border-left-width: 0px;
@@ -17,12 +17,41 @@ entry.search {
   border-radius: 0px;
 }
 
+entry.search image {
+  color: #FFFFFF;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 scrolledwindow {
   margin: 10px;
 }
 
-#item {
+box#item {
   min-height: 45px;
   border-radius: 10px;
-  background-color: #FFFFFF44;
+  background-color: #FFFFFF10;
+}
+
+box#item label  {
+  margin-left: 10px;
+}
+
+label#primaryTxt {
+  font-size: 15px;
+  margin-left: 0;
+  color: #FFFFFF;
+}
+
+
+label#secondaryTxt {
+  font-size: 10px;
+  margin-left: 0;
+  color: #AAAAAA;
+}
+
+
+
+mainContainer {
+  background-color: #00FF00;
 }
